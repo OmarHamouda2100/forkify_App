@@ -1,0 +1,122 @@
+<div class="overlay" (click)="closeWindow()"></div>
+    <div class="add-recipe-window">
+      <button class="btn--close-modal" (click)="closeWindow()">&times;</button>
+      <form class="upload" [formGroup]="form">
+        <!-- spinner -->
+        @if(isLoading) {
+          <app-spinner/>
+        }
+
+        @if(!isLoading && !isSuccess) {
+          <div class="row mb-5">
+            <div class="col-md-5">
+              <div class="upload__column">
+                <!-- reciep data -->
+                <h3 class="upload__heading">Recipe data</h3>
+
+                <div class="input d-flex align-items-center ">
+                  <label>Title</label>
+                  <input value="TEST123123" required name="title" type="text" formControlName="title" />
+                </div>
+
+                <div class="input d-flex align-items-center">
+                  <label>URL</label>
+                  <input value="TEST123123" required name="sourceUrl" type="text" formControlName="source_url" />
+                </div>
+
+                <div class="input d-flex align-items-center">
+                  <label>Image URL</label>
+                  <input value="TEST123123" required name="image" type="text" formControlName="image_url"/>
+                </div>
+                <div class="input d-flex align-items-center">
+                  <label>Publisher</label>
+                  <input value="TEST123123" required name="publisher" type="text" formControlName="publisher"/>
+                </div>
+
+                <div class="input d-flex align-items-center">
+                  <label>Prep time</label>
+                  <input value="23" required name="cookingTime" type="number" formControlName="cooking_time"/>
+                </div>
+
+                <div class="input d-flex align-items-center">
+                  <label>Servings</label>
+                  <input value="23" required name="servings" type="number" formControlName="servings"/>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-7">
+              <div class="upload__column">
+                <h3 class="upload__heading">Ingredients</h3>
+                <!-- ingredients data -->
+                <div formArrayName="ingredients">
+                  @for(ing of ingredients.controls; track $index) {
+                    <div [formGroupName]="$index">
+                      <div class="ingredients d-flex align-items-center justify-content-between">
+
+                        <label>quantity</label>
+                        <input
+                          type="text"
+                          required
+                          formControlName="quantity"
+                          name="ingredient-1"
+                          placeholder="Format: 'Quantity,Unit,Description'"
+                        />
+
+                        <label>unit</label>
+                        <input
+                          type="text"
+                          required
+                          formControlName="unit"
+                          name="ingredient-1"
+                          placeholder="Format: 'Quantity,Unit,Description'"
+                        />
+
+                        <label>description</label>
+                        <input
+                          type="text"
+                          required
+                          formControlName="description"
+                          name="ingredient-1"
+                          placeholder="Format: 'Quantity,Unit,Description'"
+                        />
+
+                        <button
+                          class="btn--inline delete"
+                          style="margin-left: 5px;"
+                          (click)="removeIngredient($index)"
+                          type="button">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M576 128c0-35.3-28.7-64-64-64L205.3 64c-17 0-33.3 6.7-45.3 18.7L9.4 233.4c-6 6-9.4 14.1-9.4 22.6s3.4 16.6 9.4 22.6L160 429.3c12 12 28.3 18.7 45.3 18.7L512 448c35.3 0 64-28.7 64-64l0-256zM271 175c9.4-9.4 24.6-9.4 33.9 0l47 47 47-47c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-47 47 47 47c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-47-47-47 47c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l47-47-47-47c-9.4-9.4-9.4-24.6 0-33.9z"/></svg>
+                          <span>delete</span>
+                        </button>
+                      </div>
+                    </div>
+                  }
+                  <button
+                    class="btn mt-5" style="margin-left: auto;"
+                    (click)="addIngredient()"
+                    type="button">addIngredient</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn upload__btn mt-5" (click)="onSubmit()">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M288 109.3L288 352c0 17.7-14.3 32-32 32s-32-14.3-32-32l0-242.7-73.4 73.4c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l128-128c12.5-12.5 32.8-12.5 45.3 0l128 128c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L288 109.3zM64 352l128 0c0 35.3 28.7 64 64 64s64-28.7 64-64l128 0c35.3 0 64 28.7 64 64l0 32c0 35.3-28.7 64-64 64L64 512c-35.3 0-64-28.7-64-64l0-32c0-35.3 28.7-64 64-64zM432 456a24 24 0 1 0 0-48 24 24 0 1 0 0 48z"/></svg>
+            <span>Upload</span>
+          </button>
+        }
+
+        <!-- success message -->
+        @if(isSuccess) {
+          <div class="message">
+            <div>
+              <!-- <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                <path d="M464 256A208 208 0 1 0 48 256a208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm177.6 62.1C192.8 334.5 218.8 352 256 352s63.2-17.5 78.4-33.9c9-9.7 24.2-10.4 33.9-1.4s10.4 24.2 1.4 33.9c-22 23.8-60 49.4-113.6 49.4s-91.7-25.5-113.6-49.4c-9-9.7-8.4-24.9 1.4-33.9s24.9-8.4 33.9 1.4zm40-89.3s0 0 0 0c0 0 0 0 0 0l-.2-.2c-.2-.2-.4-.5-.7-.9c-.6-.8-1.6-2-2.8-3.4c-2.5-2.8-6-6.6-10.2-10.3c-8.8-7.8-18.8-14-27.7-14s-18.9 6.2-27.7 14c-4.2 3.7-7.7 7.5-10.2 10.3c-1.2 1.4-2.2 2.6-2.8 3.4c-.3 .4-.6 .7-.7 .9l-.2 .2c0 0 0 0 0 0c0 0 0 0 0 0s0 0 0 0c-2.1 2.8-5.7 3.9-8.9 2.8s-5.5-4.1-5.5-7.6c0-17.9 6.7-35.6 16.6-48.8c9.8-13 23.9-23.2 39.4-23.2s29.6 10.2 39.4 23.2c9.9 13.2 16.6 30.9 16.6 48.8c0 3.4-2.2 6.5-5.5 7.6s-6.9 0-8.9-2.8c0 0 0 0 0 0s0 0 0 0zm160 0c0 0 0 0 0 0l-.2-.2c-.2-.2-.4-.5-.7-.9c-.6-.8-1.6-2-2.8-3.4c-2.5-2.8-6-6.6-10.2-10.3c-8.8-7.8-18.8-14-27.7-14s-18.9 6.2-27.7 14c-4.2 3.7-7.7 7.5-10.2 10.3c-1.2 1.4-2.2 2.6-2.8 3.4c-.3 .4-.6 .7-.7 .9l-.2 .2c0 0 0 0 0 0c0 0 0 0 0 0s0 0 0 0s0 0 0 0z"/>
+              </svg> -->
+            </div>
+            <p>{{ message }}</p>
+          </div>
+        }
+      </form>
+    </div>
